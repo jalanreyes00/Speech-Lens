@@ -1,7 +1,8 @@
 # Speech-Lens
 Code and model used to create Speech Lens for DubHacks 2020
 
-frozen_east_text_detection.pb was the model used for text detection. worddetection.py is the python script that runs the Speech Lens algorithm.
+frozen_east_text_detection.pb was the model used for text detection. 
+worddetection.py is the python script that runs the Speech Lens algorithm.
 
 # Helpful Installation links for OpenCV and Tesseract
 https://heartbeat.fritz.ai/real-time-object-detection-on-raspberry-pi-using-opencv-dnn-98827255fa60
