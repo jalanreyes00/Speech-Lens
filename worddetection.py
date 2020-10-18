@@ -8,21 +8,8 @@ import pytesseract
 import time
 import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
 
-is_video = False
+is_video = True
 take_photo = False
-
-# Resolution and buffer constants
-X_RESOLUTION = 640
-Y_RESOLUTION = 480
-BUFFER = X_RESOLUTION * 0.15
-
-#Camera Setup
-camera = PiCamera()
-camera.resolution = (X_RESOLUTION,Y_RESOLUTION)
-camera.framerate = 30
-video_feed = PiRGBArray(camera, size=(X_RESOLUTION,Y_RESOLUTION))
-video_feed.truncate(0)
-video_feed.seek(0)
 
 # GPIO set up
 GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
@@ -148,11 +135,27 @@ def decode_predictions(scores, geometry):
     # return a tuple of the bounding boxes and associated confidences
     return (rects, confidences)
 
+# Resolution and buffer constants
+X_RESOLUTION = 640
+Y_RESOLUTION = 480
+BUFFER = X_RESOLUTION * 0.15
+
+#Camera Setup
+camera = PiCamera()
+camera.resolution = (X_RESOLUTION,Y_RESOLUTION)
+camera.framerate = 30
+video_feed = PiRGBArray(camera, size=(X_RESOLUTION,Y_RESOLUTION))
+video_feed.truncate(0)
+video_feed.seek(0)
+
+# Set up text to speech engine
+engine = pyttsx3.init()
+
 # CNN layers needed (scores and geometry of rectangles for detected words)
 layerNames = ["feature_fusion/Conv_7/Sigmoid","feature_fusion/concat_3"]
 
-# Read cnn model
-net = cv2.dnn.readNet("frozen_east_text_detection.pb")
+# Config for tesseract
+config = ("-l eng --oem 1 --psm 7")
 
 # Calculate frequency of system
 fr_calc = 1
@@ -160,11 +163,10 @@ freq = cv2.getTickFrequency()
 
 # Font
 font = cv2.FONT_HERSHEY_SIMPLEX
-# Config for tesseract
-config = ("-l eng --oem 1 --psm 7")
 
-# Set up text to speech engine
-engine = pyttsx3.init()
+# Read cnn model
+net = cv2.dnn.readNet("frozen_east_text_detection.pb")
+
 
 # Coefficient to transform new coordinates to fit image
 rW = float(X_RESOLUTION / 320)
